@@ -1,0 +1,16 @@
+#!/bin/sh
+
+IS_RUNNING="$(xdotool search --name 'Telegram')"
+if [ -z "$IS_RUNNING" ]; then
+	telegram-desktop &
+	echo "shown" > /tmp/toggle_telegram_info
+else
+	STATUS="$(cat /tmp/toggle_telegram_info)"
+	if [ "$STATUS" == "shown" ]; then
+		xdo hide -N TelegramDesktop
+		echo "hidden" > /tmp/toggle_telegram_info
+	else
+		xdo show `xdotool search --name "Telegram" | tail -1`
+		echo "shown" > /tmp/toggle_telegram_info
+	fi
+fi
