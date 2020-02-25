@@ -1,6 +1,6 @@
 # DWM
 
-My personal version of dwm. In the `patches` folder there are all the patches that I applied, while in the `script` folder there are some useful scripts.
+My personal version of dwm. In the `patches` folder there are all the patches that I applied, while in the `scripts` folder there are some useful scripts.
 
 ## Patches
 
