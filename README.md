@@ -14,7 +14,7 @@ My personal version of dwm. In the `patches` folder there are all the patches th
 
 ## Scripts
 
-- `dwm-status-bar`: a script to show a colored status bar on dwm. You can put the following code in your `.xprofile` file:
+`dwm-status-bar`: a script to show a colored status bar on dwm. You can put the following code in your `.xprofile` file:
 
 ```
 while xsetroot -name "`dwm-status-bar`"
@@ -23,4 +23,4 @@ do
 done &
 ```
 
-- `toggle_telegram`: a script that initializes telegram if it is not running and then toggles it to show/hide using `xdo` and `xdotool` tools.
+`toggle_telegram`: a script that initializes telegram if it is not running and then toggles it to show/hide using `xdo` and `xdotool` tools.
