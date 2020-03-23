@@ -1,61 +1,53 @@
 --- dwm.c
 +++ dwm.c
-@@ -75,7 +75,9 @@
- 
- /* enums */
- enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
--enum { SchemeNorm, SchemeSel }; /* color schemes */
-+enum { SchemeNorm, SchemeSel, SchemeWarn, SchemeUrgent,
-+       SchemeCol1, SchemeCol2, SchemeCol3, SchemeCol4, SchemeCol5,
-+       SchemeCol6, SchemeCol7, SchemeCol8, SchemeCol9 }; /* color schemes */
- enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
-        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
-        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
-@@ -739,13 +741,44 @@ drawbar(Monitor *m)
- 	int boxs = drw->fonts->h / 9;
- 	int boxw = drw->fonts->h / 6 + 2;
- 	unsigned int i, occ = 0, urg = 0;
-+	
-+	char *ts = stext;
-+	char *tp = stext;
-+    
-+	int tx = 0;
-+	char ctmp;
- 	Client *c;
--
-+	/* correction for colours */
-+ 	int correct = 0; 
-+	char *xcape = malloc (sizeof (char) * 128);
-+	memset(xcape,0,sizeof (char) * 128);
-+	for ( ; *ts != '\0' ; ts++) {    
-+		if (*ts <= LENGTH(colors)) {
-+			sprintf(xcape,"%c",*ts);
-+			correct += TEXTW(xcape) - lrpad;
-+		}
-+	}
-+	free(xcape);
-+	ts = stext;
-+  
- 	/* draw status first so it can be overdrawn by tags later */
- 	if (m == selmon) { /* status is only drawn on selected monitor */
- 		drw_setscheme(drw, scheme[SchemeNorm]);
--		sw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
--		drw_text(drw, m->ww - sw, 0, sw, bh, 0, stext, 0);
-+		sw = TEXTW(stext) - lrpad + 2 - correct; /* 2px right padding and correction for escape sequences*/
-+		while (1) {
-+			if ( (unsigned int) *ts > LENGTH(colors) ) { 
-+				ts++;
-+				continue; 
-+			}
-+			ctmp = *ts;
-+			*ts = '\0';
-+			drw_text(drw, m->ww - sw + tx, 0, sw - tx, bh, 0, tp, 0);
-+			tx += TEXTW(tp) - lrpad;
-+			if (ctmp == '\0') { break; }
-+			drw_setscheme(drw, scheme[(unsigned int)(ctmp-1)]);
-+			*ts = ctmp;
-+			tp = ++ts;
-+		}
+@@ -1556,8 +1548,7 @@ setup(void)
+ 	sw = DisplayWidth(dpy, screen);
+ 	sh = DisplayHeight(dpy, screen);
+ 	root = RootWindow(dpy, screen);
+-	xinitvisual();
+-	drw = drw_create(dpy, screen, root, sw, sh, visual, depth, cmap);
++	drw = drw_create(dpy, screen, root, sw, sh);
+ 	drw_load_fonts(drw, fonts, LENGTH(fonts));
+ 	if (!drw->fontcount)
+ 		die("no fonts could be loaded.\n");
+@@ -1581,12 +1572,12 @@ setup(void)
+ 	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
+ 	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
+ 	/* init appearance */
+-	scheme[SchemeNorm].border = drw_clr_create(drw, normbordercolor, borderalpha);
+-	scheme[SchemeNorm].bg = drw_clr_create(drw, normbgcolor, baralpha);
+-	scheme[SchemeNorm].fg = drw_clr_create(drw, normfgcolor, OPAQUE);
+-	scheme[SchemeSel].border = drw_clr_create(drw, selbordercolor, borderalpha);
+-	scheme[SchemeSel].bg = drw_clr_create(drw, selbgcolor, baralpha);
+-	scheme[SchemeSel].fg = drw_clr_create(drw, selfgcolor, OPAQUE);
++	scheme[SchemeNorm].border = drw_clr_create(drw, normbordercolor);
++	scheme[SchemeNorm].bg = drw_clr_create(drw, normbgcolor);
++	scheme[SchemeNorm].fg = drw_clr_create(drw, normfgcolor);
++	scheme[SchemeSel].border = drw_clr_create(drw, selbordercolor);
++	scheme[SchemeSel].bg = drw_clr_create(drw, selbgcolor);
++	scheme[SchemeSel].fg = drw_clr_create(drw, selfgcolor);
+ 	/* init bars */
+ 	updatebars();
+ 	updatestatus();
+@@ -1799,17 +1790,15 @@ updatebars(void)
+ 	Monitor *m;
+ 	XSetWindowAttributes wa = {
+ 		.override_redirect = True,
+-		.background_pixel = 0,
+-		.border_pixel = 0,
+-		.colormap = cmap,
++		.background_pixmap = ParentRelative,
+ 		.event_mask = ButtonPressMask|ExposureMask
+ 	};
+ 	for (m = mons; m; m = m->next) {
+ 		if (m->barwin)
+ 			continue;
+-		m->barwin = XCreateWindow(dpy, root, m->wx, m->by, m->ww, bh, 0, depth,
+-		                          InputOutput, visual,
+-		                          CWOverrideRedirect|CWBackPixel|CWBorderPixel|CWColormap|CWEventMask, &wa);
++		m->barwin = XCreateWindow(dpy, root, m->wx, m->by, m->ww, bh, 0, DefaultDepth(dpy, screen),
++		                          CopyFromParent, DefaultVisual(dpy, screen),
++		                          CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
+ 		XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
+ 		XMapRaised(dpy, m->barwin);
  	}
- 
- 	for (c = m->clients; c; c = c->next) {

@@ -7,27 +7,50 @@ static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 //static const char *fonts[]          = { "Fontawesome:size=9", "Hack Nerd Font:size=10" };
-static const char *fonts[]          = { "Fontawesome:size=10", "Ubuntu Mono derivative Powerline:size=12" };
+static const char *fonts[]          = { "Fontawesome:size=10", "Ubuntu Mono derivative Powerline:size=12", "JoyPixels:pixelsize=12:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=10";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
+static const char col_cyan[]        = "#283655";
 static const char col_black[]       = "#000000";
-static const char col_red[]         = "#ff0000";
-static const char col_yellow[]      = "#ffff00";
+static const char col_red[]         = "#ee4035";
+static const char col_yellow[]      = "#ffde00";
 static const char col_green[]				= "#00ff00";
 static const char col_magenta[]			= "#45264D";
 static const char col_white[]       = "#ffffff";
+
 static const char *colors[][3]      = {
 	/*					fg         bg          border   */
 	[SchemeNorm] =	 { col_gray3, col_gray1,  col_gray2 },
-	[SchemeSel]  =	 { col_gray4, col_cyan,   col_cyan },
+	[SchemeSel]  =	 { col_white, col_cyan,   col_cyan },
 	[SchemeWarn] =	 { col_black, col_yellow, col_red },
 	[SchemeUrgent]=	 { col_white, col_red,    col_red },
-	[SchemeCol1]=		 { col_black, col_green,  col_red },
-	[SchemeCol2]=		 { col_white, col_magenta,  col_red },
+
+	// Color scheme 1
+	//[SchemeCol1]=		 { col_black, "#faa275",	col_red },
+	//[SchemeCol2]=		 { col_black, "#ff8c61",  col_red },
+	//[SchemeCol3]=		 { col_black, "#ce6a85",  col_red },
+	//[SchemeCol4]=		 { col_white, "#985277",  col_red },
+	//[SchemeCol5]=		 { col_white, "#5c374c",  col_red },
+	//[SchemeCol6]=		 { col_white, "#5c373c",  col_red },
+	
+	// Color scheme 2
+	//[SchemeCol1]=		 { col_black, "#fe938c",	col_red },
+	//[SchemeCol2]=		 { col_black, "#e6b89c",  col_red },
+	//[SchemeCol3]=		 { col_black, "#ead2ac",  col_red },
+	//[SchemeCol4]=		 { col_black, "#9cafb7",  col_red },
+	//[SchemeCol5]=		 { col_white, "#4281a4",  col_red },
+	//[SchemeCol6]=		 { col_white, "#4263a4",  col_red },
+
+	// Color scheme 3
+	[SchemeCol1]=		 { col_black, "#c9cba3",	col_red },
+	[SchemeCol2]=		 { col_black, "#ffe1a8",  col_red },
+	[SchemeCol3]=		 { col_black, "#e26d5c",  col_red },
+	[SchemeCol4]=		 { col_white, "#723d46",  col_red },
+	[SchemeCol5]=		 { col_white, "#472d30",  col_red },
+	[SchemeCol6]=		 { col_white, "#723d46",  col_red },
 };
 
 /* tagging */
