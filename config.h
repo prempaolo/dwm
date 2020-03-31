@@ -17,7 +17,6 @@ static const unsigned int baralpha = 0xd0;
 static const unsigned int borderalpha = OPAQUE;
 
 static char normbgcolor[]           = "#282828";
-//static char normbordercolor[]       = "#444444";
 static char normbordercolor[]       = "#222222";
 static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#ffffff";
@@ -54,7 +53,7 @@ static const char *colors[][3]      = {
 	[SchemeCol6]=		 { col_white, "#723d46",  normbordercolor },
 
 	[SchemeStatus]		= { normfgcolor, normbgcolor, normbordercolor },
-	[SchemeTagsSel]		= { col_black,  "#c9cba3",  selbordercolor	 },
+	[SchemeTagsSel]		= { col_black,	 selbgcolor,  selbordercolor	 },
 	[SchemeTagsNorm]	= { normfgcolor, normbgcolor, normbordercolor  },
   [SchemeInfoSel]		= { selfgcolor,	 selbgcolor,  selbordercolor },
   [SchemeInfoNorm]  = { normfgcolor, normbgcolor, normbordercolor },
@@ -193,6 +192,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period, 					 focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  					 tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, 					 tagmon,         {.i = +1 } },
+	{ MODKEY,                       XK_F5,							 xrdb,           {.v = NULL } },
 	TAGKEYS(                        XK_1,      					                 0)
 	TAGKEYS(                        XK_2,      					                 1)
 	TAGKEYS(                        XK_3,      					                 2)

@@ -1,0 +1,179 @@
+diff -ur a/config.def.h b/config.def.h
+--- a/config.def.h	2020-03-31 17:55:45.400001495 +0200
++++ b/config.def.h	2020-03-31 17:56:34.740001558 +0200
+@@ -105,6 +105,7 @@
+ 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+ 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+ 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
++	{ MODKEY,                       XK_F5,     xrdb,           {.v = NULL } },
+ 	TAGKEYS(                        XK_1,                      0)
+ 	TAGKEYS(                        XK_2,                      1)
+ 	TAGKEYS(                        XK_3,                      2)
+diff -ur a/config.h b/config.h
+--- a/config.h	2020-03-31 17:55:59.866668181 +0200
++++ b/config.h	2020-03-31 18:27:44.320004183 +0200
+@@ -17,7 +17,6 @@
+ static const unsigned int borderalpha = OPAQUE;
+ 
+ static char normbgcolor[]           = "#282828";
+-//static char normbordercolor[]       = "#444444";
+ static char normbordercolor[]       = "#222222";
+ static char normfgcolor[]           = "#bbbbbb";
+ static char selfgcolor[]            = "#ffffff";
+@@ -54,7 +53,7 @@
+ 	[SchemeCol6]=		 { col_white, "#723d46",  normbordercolor },
+ 
+ 	[SchemeStatus]		= { normfgcolor, normbgcolor, normbordercolor },
+-	[SchemeTagsSel]		= { col_black,  "#c9cba3",  selbordercolor	 },
++	[SchemeTagsSel]		= { col_black,	 selbgcolor,  selbordercolor	 },
+ 	[SchemeTagsNorm]	= { normfgcolor, normbgcolor, normbordercolor  },
+   [SchemeInfoSel]		= { selfgcolor,	 selbgcolor,  selbordercolor },
+   [SchemeInfoNorm]  = { normfgcolor, normbgcolor, normbordercolor },
+@@ -193,6 +192,7 @@
+ 	{ MODKEY,                       XK_period, 					 focusmon,       {.i = +1 } },
+ 	{ MODKEY|ShiftMask,             XK_comma,  					 tagmon,         {.i = -1 } },
+ 	{ MODKEY|ShiftMask,             XK_period, 					 tagmon,         {.i = +1 } },
++	{ MODKEY,                       XK_F5,							 xrdb,           {.v = NULL } },
+ 	TAGKEYS(                        XK_1,      					                 0)
+ 	TAGKEYS(                        XK_2,      					                 1)
+ 	TAGKEYS(                        XK_3,      					                 2)
+diff -ur a/drw.c b/drw.c
+--- a/drw.c	2020-03-31 17:55:45.400001495 +0200
++++ b/drw.c	2020-03-31 17:56:34.743334892 +0200
+@@ -211,7 +211,7 @@
+ /* Wrapper to create color schemes. The caller has to call free(3) on the
+  * returned color scheme when done using it. */
+ Clr *
+-drw_scm_create(Drw *drw, const char *clrnames[], const unsigned int alphas[], size_t clrcount)
++drw_scm_create(Drw *drw, char *clrnames[], const unsigned int alphas[], size_t clrcount)
+ {
+ 	size_t i;
+ 	Clr *ret;
+diff -ur a/drw.h b/drw.h
+--- a/drw.h	2020-03-31 17:55:45.400001495 +0200
++++ b/drw.h	2020-03-31 17:56:34.743334892 +0200
+@@ -42,7 +42,7 @@
+ 
+ /* Colorscheme abstraction */
+ void drw_clr_create(Drw *drw, Clr *dest, const char *clrname, unsigned int alpha);
+-Clr *drw_scm_create(Drw *drw, const char *clrnames[], const unsigned int alphas[], size_t clrcount);
++Clr *drw_scm_create(Drw *drw, char *clrnames[], const unsigned int alphas[], size_t clrcount);
+ 
+ /* Cursor abstraction */
+ Cur *drw_cur_create(Drw *drw, int shape);
+Binary files a/dwm and b/dwm differ
+diff -ur a/dwm.c b/dwm.c
+--- a/dwm.c	2020-03-31 17:55:45.403334827 +0200
++++ b/dwm.c	2020-03-31 17:58:02.746668307 +0200
+@@ -35,6 +35,7 @@
+ #include <X11/Xatom.h>
+ #include <X11/Xlib.h>
+ #include <X11/Xproto.h>
++#include <X11/Xresource.h>
+ #include <X11/Xutil.h>
+ #ifdef XINERAMA
+ #include <X11/extensions/Xinerama.h>
+@@ -56,6 +57,21 @@
+ #define HEIGHT(X)               ((X)->h + 2 * (X)->bw + gappx)
+ #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
+ #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
++#define XRDB_LOAD_COLOR(R,V)    if (XrmGetResource(xrdb, R, NULL, &type, &value) == True) { \
++                                  if (value.addr != NULL && strnlen(value.addr, 8) == 7 && value.addr[0] == '#') { \
++                                    int i = 1; \
++                                    for (; i <= 6; i++) { \
++                                      if (value.addr[i] < 48) break; \
++                                      if (value.addr[i] > 57 && value.addr[i] < 65) break; \
++                                      if (value.addr[i] > 70 && value.addr[i] < 97) break; \
++                                      if (value.addr[i] > 102) break; \
++                                    } \
++                                    if (i == 7) { \
++                                      strncpy(V, value.addr, 7); \
++                                      V[7] = '\0'; \
++                                    } \
++                                  } \
++                                }
+ 
+ #define OPAQUE                  0xffU
+ 
+@@ -186,6 +202,7 @@
+ static void incnmaster(const Arg *arg);
+ static void keypress(XEvent *e);
+ static void killclient(const Arg *arg);
++static void loadxrdb(void);
+ static void manage(Window w, XWindowAttributes *wa);
+ static void mappingnotify(XEvent *e);
+ static void maprequest(XEvent *e);
+@@ -244,6 +261,7 @@
+ static int xerrordummy(Display *dpy, XErrorEvent *ee);
+ static int xerrorstart(Display *dpy, XErrorEvent *ee);
+ static void xinitvisual();
++static void xrdb(const Arg *arg);
+ static void zoom(const Arg *arg);
+ 
+ /* variables */
+@@ -1107,6 +1125,37 @@
+ }
+ 
+ void
++loadxrdb()
++{
++  Display *display;
++  char * resm;
++  XrmDatabase xrdb;
++  char *type;
++  XrmValue value;
++
++  display = XOpenDisplay(NULL);
++
++  if (display != NULL) {
++    resm = XResourceManagerString(display);
++
++    if (resm != NULL) {
++      xrdb = XrmGetStringDatabase(resm);
++
++      if (xrdb != NULL) {
++        XRDB_LOAD_COLOR("dwm.normbordercolor", normbordercolor);
++        XRDB_LOAD_COLOR("dwm.normbgcolor", normbgcolor);
++        XRDB_LOAD_COLOR("dwm.normfgcolor", normfgcolor);
++        XRDB_LOAD_COLOR("dwm.selbordercolor", selbordercolor);
++        XRDB_LOAD_COLOR("dwm.selbgcolor", selbgcolor);
++        XRDB_LOAD_COLOR("dwm.selfgcolor", selfgcolor);
++      }
++    }
++  }
++
++  XCloseDisplay(display);
++}
++
++void
+ manage(Window w, XWindowAttributes *wa)
+ {
+ 	Client *c, *t = NULL;
+@@ -2360,6 +2409,17 @@
+ }
+ 
+ void
++xrdb(const Arg *arg)
++{
++  loadxrdb();
++  int i;
++  for (i = 0; i < LENGTH(colors); i++)
++                scheme[i] = drw_scm_create(drw, colors[i], alphas[i], 3);
++  focus(NULL);
++  arrange(NULL);
++}
++
++void
+ zoom(const Arg *arg)
+ {
+ 	Client *c = selmon->sel;
+@@ -2385,6 +2445,8 @@
+ 	if (!(dpy = XOpenDisplay(NULL)))
+ 		die("dwm: cannot open display");
+ 	checkotherwm();
++	XrmInitialize();
++	loadxrdb();
+ 	setup();
+ #ifdef __OpenBSD__
+ 	if (pledge("stdio rpath proc exec", NULL) == -1)
+Binary files a/dwm.o and b/dwm.o differ
