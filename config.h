@@ -23,6 +23,19 @@ static char selfgcolor[]            = "#000000";
 static char selbordercolor[]        = "#c9cba3";
 static char selbgcolor[]            = "#282828";
 
+static char color1bg[]       = "#c9cba3";
+static char color2bg[]       = "#ffe1a8";
+static char color3bg[]       = "#e26d5c";
+static char color4bg[]       = "#723d46";
+static char color5bg[]       = "#472d30";
+static char color6bg[]       = "#723d46";
+static char color1fg[]       = "#000000";
+static char color2fg[]       = "#000000";
+static char color3fg[]       = "#000000";
+static char color4fg[]       = "#ffffff";
+static char color5fg[]       = "#ffffff";
+static char color6fg[]       = "#ffffff";
+
 static const char *colors[][3]      = {
 	/*					fg         bg          border   */
 	[SchemeNorm]			= { normfgcolor, normbgcolor, normbordercolor },
@@ -45,12 +58,12 @@ static const char *colors[][3]      = {
 	//[SchemeCol6]=		 { col_white, "#4263a4",  normbordercolor },
 
 	// Color scheme 3
-	[SchemeCol1]=		 { col_black, "#c9cba3",	normbordercolor },
-	[SchemeCol2]=		 { col_black, "#ffe1a8",  normbordercolor },
-	[SchemeCol3]=		 { col_black, "#e26d5c",  normbordercolor },
-	[SchemeCol4]=		 { col_white, "#723d46",  normbordercolor },
-	[SchemeCol5]=		 { col_white, "#472d30",  normbordercolor },
-	[SchemeCol6]=		 { col_white, "#723d46",  normbordercolor },
+	[SchemeCol1]=		 { color1fg,	color1bg, normbordercolor },
+	[SchemeCol2]=		 { color2fg,  color2bg, normbordercolor },
+	[SchemeCol3]=		 { color3fg,  color3bg, normbordercolor },
+	[SchemeCol4]=		 { color4fg,  color4bg, normbordercolor },
+	[SchemeCol5]=		 { color5fg,  color5bg, normbordercolor },
+	[SchemeCol6]=		 { color6fg,  color6bg, normbordercolor },
 
 	[SchemeStatus]		= { normfgcolor, normbgcolor, normbordercolor },
 	[SchemeTagsSel]		= { selfgcolor,	 selbgcolor,  selbordercolor	 },

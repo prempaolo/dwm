@@ -1,0 +1,24 @@
+Binary files a/dwm and b/dwm differ
+diff -ur a/dwm.c b/dwm.c
+--- a/dwm.c	2020-03-31 19:31:54.811572458 +0200
++++ b/dwm.c	2020-03-31 19:56:56.960836086 +0200
+@@ -1148,6 +1148,18 @@
+         XRDB_LOAD_COLOR("dwm.selbordercolor", selbordercolor);
+         XRDB_LOAD_COLOR("dwm.selbgcolor", selbgcolor);
+         XRDB_LOAD_COLOR("dwm.selfgcolor", selfgcolor);
++        XRDB_LOAD_COLOR("dwm.color1bg", color1bg);
++        XRDB_LOAD_COLOR("dwm.color2bg", color2bg);
++        XRDB_LOAD_COLOR("dwm.color3bg", color3bg);
++        XRDB_LOAD_COLOR("dwm.color4bg", color4bg);
++        XRDB_LOAD_COLOR("dwm.color5bg", color5bg);
++        XRDB_LOAD_COLOR("dwm.color6bg", color6bg);
++        XRDB_LOAD_COLOR("dwm.color1fg", color1fg);
++        XRDB_LOAD_COLOR("dwm.color2fg", color2fg);
++        XRDB_LOAD_COLOR("dwm.color3fg", color3fg);
++        XRDB_LOAD_COLOR("dwm.color4fg", color4fg);
++        XRDB_LOAD_COLOR("dwm.color5fg", color5fg);
++        XRDB_LOAD_COLOR("dwm.color6fg", color6fg);
+       }
+     }
+   }
+Binary files a/dwm.o and b/dwm.o differ
