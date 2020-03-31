@@ -19,7 +19,7 @@ static const unsigned int borderalpha = OPAQUE;
 static char normbgcolor[]           = "#282828";
 static char normbordercolor[]       = "#222222";
 static char normfgcolor[]           = "#bbbbbb";
-static char selfgcolor[]            = "#ffffff";
+static char selfgcolor[]            = "#000000";
 static char selbordercolor[]        = "#c9cba3";
 static char selbgcolor[]            = "#282828";
 
@@ -53,7 +53,7 @@ static const char *colors[][3]      = {
 	[SchemeCol6]=		 { col_white, "#723d46",  normbordercolor },
 
 	[SchemeStatus]		= { normfgcolor, normbgcolor, normbordercolor },
-	[SchemeTagsSel]		= { col_black,	 selbgcolor,  selbordercolor	 },
+	[SchemeTagsSel]		= { selfgcolor,	 selbgcolor,  selbordercolor	 },
 	[SchemeTagsNorm]	= { normfgcolor, normbgcolor, normbordercolor  },
   [SchemeInfoSel]		= { selfgcolor,	 selbgcolor,  selbordercolor },
   [SchemeInfoNorm]  = { normfgcolor, normbgcolor, normbordercolor },
