@@ -1,14 +1,17 @@
 #!/bin/sh
 
 if [ "$(mpc status | grep playing)" == "" ]; then
-	MPC="\x04  "
+	MPC="\x05  "
 else
-	MPC="\x06 $(mpc status --format "  %artist% - %title% ("$(mpc status | sed -n 2p | awk -F" " '{ print $3 }')")" | head -1)"
+	MPC="\x05 $(mpc status --format "  %artist% - %title% ("$(mpc status | sed -n 2p | awk -F" " '{ print $3 }')")" | head -1)"
 fi
 
 DATE="$(date +"  %a"\ "%d"\ "%h "\|\ \ "  %H":"%M")"
 
-BATTERY="  $(cat /sys/class/power_supply/BAT0/capacity)% "
+CAPACITY="$(cat /sys/class/power_supply/BAT0/capacity)"
+STATUS="$(cat /sys/class/power_supply/BAT0/status)"
+[ "$CAPACITY" -lt 20 ] && [ "$STATUS" == "Discharging" ] && notify-send -t 3000 -u critical "BATTERY LOW" "Attach it to your charger\!"
+BATTERY="  $CAPACITY% "
 
 if [ "$(amixer get Master | awk -F'[][]' 'END{ print $6 }')" == "off" ]; then
 	VOLUME="x $(amixer get Master | awk -F'[][]' 'END{ print $2 }')"
@@ -20,4 +23,4 @@ CPU="  $(top -b -n1 | grep "Cpu(s)" | awk '{print $2 + $4}')%"
 
 RAM="  $(free -m | awk 'NR==2{printf "%s/%sMB\n", $3,$2 }')"
 
-echo -e "\x01 $MPC \x01 \x03 $RAM \x01 \x04 $CPU \x01 \x03 $VOLUME \x01 \x02 $DATE \x01 \x03 $BATTERY\x01"
+echo -e "\x01 $MPC \x01 \x06 $RAM \x01 \x07 $CPU \x01 \x08 $VOLUME \x01 \x09 $DATE \x01 \x0a $BATTERY\x01"

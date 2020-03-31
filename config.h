@@ -9,48 +9,74 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 //static const char *fonts[]          = { "Fontawesome:size=9", "Hack Nerd Font:size=10" };
 static const char *fonts[]          = { "Fontawesome:size=10", "Ubuntu Mono derivative Powerline:size=12", "JoyPixels:pixelsize=12:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=10";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#283655";
+
 static const char col_black[]       = "#000000";
-static const char col_red[]         = "#ee4035";
-static const char col_yellow[]      = "#ffde00";
-static const char col_green[]				= "#00ff00";
-static const char col_magenta[]			= "#45264D";
 static const char col_white[]       = "#ffffff";
+
+static const unsigned int baralpha = 0xd0;
+static const unsigned int borderalpha = OPAQUE;
+
+static char normbgcolor[]           = "#282828";
+//static char normbordercolor[]       = "#444444";
+static char normbordercolor[]       = "#222222";
+static char normfgcolor[]           = "#bbbbbb";
+static char selfgcolor[]            = "#ffffff";
+static char selbordercolor[]        = "#c9cba3";
+static char selbgcolor[]            = "#282828";
 
 static const char *colors[][3]      = {
 	/*					fg         bg          border   */
-	[SchemeNorm] =	 { col_gray3, col_gray1,  col_gray2 },
-	[SchemeSel]  =	 { col_white, col_cyan,   col_cyan },
-	[SchemeWarn] =	 { col_black, col_yellow, col_red },
-	[SchemeUrgent]=	 { col_white, col_red,    col_red },
+	[SchemeNorm]			= { normfgcolor, normbgcolor, normbordercolor },
+  [SchemeSel]				= { selfgcolor,  selbgcolor,  selbordercolor  },
 
 	// Color scheme 1
-	//[SchemeCol1]=		 { col_black, "#faa275",	col_red },
-	//[SchemeCol2]=		 { col_black, "#ff8c61",  col_red },
-	//[SchemeCol3]=		 { col_black, "#ce6a85",  col_red },
-	//[SchemeCol4]=		 { col_white, "#985277",  col_red },
-	//[SchemeCol5]=		 { col_white, "#5c374c",  col_red },
-	//[SchemeCol6]=		 { col_white, "#5c373c",  col_red },
+	//[SchemeCol1]=		 { col_black, "#faa275",	normbordercolor },
+	//[SchemeCol2]=		 { col_black, "#ff8c61",  normbordercolor },
+	//[SchemeCol3]=		 { col_black, "#ce6a85",  normbordercolor },
+	//[SchemeCol4]=		 { col_white, "#985277",  normbordercolor },
+	//[SchemeCol5]=		 { col_white, "#5c374c",  normbordercolor },
+	//[SchemeCol6]=		 { col_white, "#5c373c",  normbordercolor },
 	
 	// Color scheme 2
-	//[SchemeCol1]=		 { col_black, "#fe938c",	col_red },
-	//[SchemeCol2]=		 { col_black, "#e6b89c",  col_red },
-	//[SchemeCol3]=		 { col_black, "#ead2ac",  col_red },
-	//[SchemeCol4]=		 { col_black, "#9cafb7",  col_red },
-	//[SchemeCol5]=		 { col_white, "#4281a4",  col_red },
-	//[SchemeCol6]=		 { col_white, "#4263a4",  col_red },
+	//[SchemeCol1]=		 { col_black, "#fe938c",	normbordercolor },
+	//[SchemeCol2]=		 { col_black, "#e6b89c",  normbordercolor },
+	//[SchemeCol3]=		 { col_black, "#ead2ac",  normbordercolor },
+	//[SchemeCol4]=		 { col_black, "#9cafb7",  normbordercolor },
+	//[SchemeCol5]=		 { col_white, "#4281a4",  normbordercolor },
+	//[SchemeCol6]=		 { col_white, "#4263a4",  normbordercolor },
 
 	// Color scheme 3
-	[SchemeCol1]=		 { col_black, "#c9cba3",	col_red },
-	[SchemeCol2]=		 { col_black, "#ffe1a8",  col_red },
-	[SchemeCol3]=		 { col_black, "#e26d5c",  col_red },
-	[SchemeCol4]=		 { col_white, "#723d46",  col_red },
-	[SchemeCol5]=		 { col_white, "#472d30",  col_red },
-	[SchemeCol6]=		 { col_white, "#723d46",  col_red },
+	[SchemeCol1]=		 { col_black, "#c9cba3",	normbordercolor },
+	[SchemeCol2]=		 { col_black, "#ffe1a8",  normbordercolor },
+	[SchemeCol3]=		 { col_black, "#e26d5c",  normbordercolor },
+	[SchemeCol4]=		 { col_white, "#723d46",  normbordercolor },
+	[SchemeCol5]=		 { col_white, "#472d30",  normbordercolor },
+	[SchemeCol6]=		 { col_white, "#723d46",  normbordercolor },
+
+	[SchemeStatus]		= { normfgcolor, normbgcolor, normbordercolor },
+	[SchemeTagsSel]		= { col_black,  "#c9cba3",  selbordercolor	 },
+	[SchemeTagsNorm]	= { normfgcolor, normbgcolor, normbordercolor  },
+  [SchemeInfoSel]		= { selfgcolor,	 selbgcolor,  selbordercolor },
+  [SchemeInfoNorm]  = { normfgcolor, normbgcolor, normbordercolor },
+};
+
+static const unsigned int alphas[][3]      = {
+	/*               fg      bg        border     */
+	[SchemeNorm] = { OPAQUE, baralpha, borderalpha },
+	[SchemeSel]  = { OPAQUE, baralpha, borderalpha },
+
+	[SchemeCol1]=	{ OPAQUE, OPAQUE, OPAQUE },
+	[SchemeCol2]=	{ OPAQUE, OPAQUE, OPAQUE },
+	[SchemeCol3]=	{ OPAQUE, OPAQUE, OPAQUE },
+	[SchemeCol4]=	{ OPAQUE, OPAQUE, OPAQUE },
+	[SchemeCol5]=	{ OPAQUE, OPAQUE, OPAQUE },
+	[SchemeCol6]=	{ OPAQUE, OPAQUE, OPAQUE },
+
+	[SchemeStatus]		= { OPAQUE, OPAQUE,	OPAQUE }, 
+	[SchemeTagsSel]		= { OPAQUE, OPAQUE,	OPAQUE  },
+	[SchemeTagsNorm]	= { OPAQUE, OPAQUE, OPAQUE  },
+  [SchemeInfoSel]		= { OPAQUE, OPAQUE,		OPAQUE},
+  [SchemeInfoNorm]  = { OPAQUE, OPAQUE,		OPAQUE },
 };
 
 /* tagging */
@@ -94,11 +120,11 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", col_black, NULL };
 static const char *termcmd[]  = { "termite", NULL };
 static const char *lockcmd[]  = { "lock_screen", NULL };
-static const char *emailcmd[]  = { "st", "-n", "float", "-g", "140x70", "-e", "neomutt", NULL };
-static const char *newscmd[]  = { "st", "-n", "float", "-g", "140x70", "-e", "newsboat", NULL };
+static const char *emailcmd[]  = { "st", "-n", "float", "-g", "140x50", "-e", "neomutt", NULL };
+static const char *newscmd[]  = { "st", "-n", "float", "-g", "140x50", "-e", "newsboat", NULL };
 static const char *musiccmd[]  = { "st", "-n", "float", "-g", "120x40", "-e", "ncmpcpp", NULL };
 static const char *screenshotcmd[]  = { "screenshot", NULL };
 static const char *screenshotcropcmd[]  = { "screenshot", "-s", NULL };
