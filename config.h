@@ -104,6 +104,7 @@ static const Rule rules[] = {
 	{ "firefox",  NULL,       NULL,       0,						1,						1,           -1 },
 	{ "Telegram", NULL,       NULL,       0,						1,						1,           -1 },
 	{ "St",				"float",		NULL,				0,            1,						1,           -1 },
+	{ "Sxiv",			"float",		NULL,				0,            1,						1,           -1 },
 };
 
 /* layout(s) */
