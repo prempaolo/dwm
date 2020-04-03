@@ -48,15 +48,21 @@
 /* macros */
 #define BUTTONMASK              (ButtonPressMask|ButtonReleaseMask)
 #define CLEANMASK(mask)         (mask & ~(numlockmask|LockMask) & (ShiftMask|ControlMask|Mod1Mask|Mod2Mask|Mod3Mask|Mod4Mask|Mod5Mask))
+#define GETINC(X)               ((X) - 2000)
+#define INC(X)                  ((X) + 2000)
 #define INTERSECT(x,y,w,h,m)    (MAX(0, MIN((x)+(w),(m)->wx+(m)->ww) - MAX((x),(m)->wx)) \
                                * MAX(0, MIN((y)+(h),(m)->wy+(m)->wh) - MAX((y),(m)->wy)))
+#define ISINC(X)                ((X) > 1000 && (X) < 3000)
 #define ISVISIBLE(C)            ((C->tags & C->mon->tagset[C->mon->seltags]))
+#define PREVSEL                 3000
 #define LENGTH(X)               (sizeof X / sizeof X[0])
+#define MOD(N,M)                ((N)%(M) < 0 ? (N)%(M) + (M) : (N)%(M))
 #define MOUSEMASK               (BUTTONMASK|PointerMotionMask)
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw + gappx)
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw + gappx)
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
 #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
+#define TRUNC(X,A,B)            (MAX((A), MIN((X), (B))))
 #define XRDB_LOAD_COLOR(R,V)    if (XrmGetResource(xrdb, R, NULL, &type, &value) == True) { \
                                   if (value.addr != NULL && strnlen(value.addr, 8) == 7 && value.addr[0] == '#') { \
                                     int i = 1; \
@@ -79,8 +85,7 @@
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
 enum { SchemeNorm, SchemeSel, SchemeWarn, SchemeUrgent,
 			 SchemeStatus, SchemeTagsSel, SchemeTagsNorm, SchemeInfoSel, SchemeInfoNorm,
-       SchemeCol1, SchemeCol2, SchemeCol3, SchemeCol4, SchemeCol5,
-       SchemeCol6, SchemeCol7, SchemeCol8, SchemeCol9 }; /* color schemes */
+			 SchemeColor0, SchemeColor1, SchemeColor2, SchemeColor3, SchemeColor4, SchemeColor5 };
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -212,6 +217,7 @@ static void movemouse(const Arg *arg);
 static Client *nexttiled(Client *c);
 static void pop(Client *);
 static void propertynotify(XEvent *e);
+static void pushstack(const Arg *arg);
 static void quit(const Arg *arg);
 static Monitor *recttomon(int x, int y, int w, int h);
 static void resize(Client *c, int x, int y, int w, int h, int interact);
@@ -232,6 +238,7 @@ static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
 static void spawn(const Arg *arg);
+static int stackpos(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *);
@@ -784,44 +791,40 @@ drawbar(Monitor *m)
 	int boxs = drw->fonts->h / 9;
 	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, occ = 0, urg = 0;
-	
 	char *ts = stext;
 	char *tp = stext;
-    
-	int tx = 0;
-	char ctmp;
+  int tsw, tpw, tx = 0;
 	Client *c;
-	/* correction for colours */
- 	int correct = 0; 
-	char *xcape = malloc (sizeof (char) * 128);
-	memset(xcape,0,sizeof (char) * 128);
-	for ( ; *ts != '\0' ; ts++) {    
-		if (*ts <= LENGTH(colors)) {
-			sprintf(xcape,"%c",*ts);
-			correct += TEXTW(xcape) - lrpad;
-		}
-	}
-	free(xcape);
-	ts = stext;
-  
+
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeStatus]);
-		sw = TEXTW(stext) - lrpad + 2 - correct; /* 2px right padding and correction for escape sequences*/
-		while (1) {
-			if ( (unsigned int) *ts > LENGTH(colors) ) { 
-				ts++;
-				continue; 
+		int counter=0;
+		char tmp[3];
+		while (*(tp+2) != '\0') {
+			if (*tp == 91 && *(tp+2) == 93) {
+				tmp[0]=*tp;
+				tmp[1]=*(tp+1);
+				tmp[2]=*(tp+2);
+				counter += TEXTW(tmp) - lrpad;
 			}
-			ctmp = *ts;
-			*ts = '\0';
-			drw_text(drw, m->ww - sw + tx, 0, sw - tx, bh, 0, tp, 0);
-			tx += TEXTW(tp) - lrpad;
-			if (ctmp == '\0') { break; }
-			drw_setscheme(drw, scheme[(unsigned int)(ctmp-1)]);
-			*ts = ctmp;
-			tp = ++ts;
+			tp++;
 		}
+		sw = TEXTW(stext) - lrpad + 2 - counter;
+		tp = ts;
+		while (*(tp+2) != '\0') {
+			if (*tp == 91 && (unsigned int)*(tp+1) < (LENGTH(colors)+49) && *(tp+2) == 93) {
+				drw_text(drw, m->ww - sw + tx, 0, sw - tx, bh, 0, ts, 0);
+				drw_setscheme(drw, scheme[(unsigned int) *(tp+1)-49]);
+				tpw = TEXTW(tp) - lrpad; 
+				tsw = TEXTW(ts) - lrpad; 
+				tx += tsw - tpw;
+				ts = tp+3;
+				tp = tp+2;
+			}
+			tp++;
+		}
+		drw_text(drw, m->ww - sw + tx, 0, sw - tx, bh, 0, ts, 0);
 	}
 
 	for (c = m->clients; c; c = c->next) {
@@ -948,27 +951,16 @@ focusmon(const Arg *arg)
 void
 focusstack(const Arg *arg)
 {
-	Client *c = NULL, *i;
+	int i = stackpos(arg);
+	Client *c, *p;
 
-	if (!selmon->sel)
+	if(i < 0)
 		return;
-	if (arg->i > 0) {
-		for (c = selmon->sel->next; c && !ISVISIBLE(c); c = c->next);
-		if (!c)
-			for (c = selmon->clients; c && !ISVISIBLE(c); c = c->next);
-	} else {
-		for (i = selmon->clients; i != selmon->sel; i = i->next)
-			if (ISVISIBLE(i))
-				c = i;
-		if (!c)
-			for (; i; i = i->next)
-				if (ISVISIBLE(i))
-					c = i;
-	}
-	if (c) {
-		focus(c);
-		restack(selmon);
-	}
+	
+	for(p = NULL, c = selmon->clients; c && (i || !ISVISIBLE(c));
+	    i -= ISVISIBLE(c) ? 1 : 0, p = c, c = c->next);
+	focus(c ? c : p);
+	restack(selmon);
 }
 
 Atom
@@ -1154,18 +1146,20 @@ loadxrdb()
         XRDB_LOAD_COLOR("dwm.selbordercolor", selbordercolor);
         XRDB_LOAD_COLOR("dwm.selbgcolor", selbgcolor);
         XRDB_LOAD_COLOR("dwm.selfgcolor", selfgcolor);
+
+        XRDB_LOAD_COLOR("dwm.color0bg", color0bg);
         XRDB_LOAD_COLOR("dwm.color1bg", color1bg);
         XRDB_LOAD_COLOR("dwm.color2bg", color2bg);
         XRDB_LOAD_COLOR("dwm.color3bg", color3bg);
         XRDB_LOAD_COLOR("dwm.color4bg", color4bg);
         XRDB_LOAD_COLOR("dwm.color5bg", color5bg);
-        XRDB_LOAD_COLOR("dwm.color6bg", color6bg);
+
+        XRDB_LOAD_COLOR("dwm.color0fg", color0fg);
         XRDB_LOAD_COLOR("dwm.color1fg", color1fg);
         XRDB_LOAD_COLOR("dwm.color2fg", color2fg);
         XRDB_LOAD_COLOR("dwm.color3fg", color3fg);
         XRDB_LOAD_COLOR("dwm.color4fg", color4fg);
         XRDB_LOAD_COLOR("dwm.color5fg", color5fg);
-        XRDB_LOAD_COLOR("dwm.color6fg", color6fg);
       }
     }
   }
@@ -1415,6 +1409,29 @@ propertynotify(XEvent *e)
 		if (ev->atom == netatom[NetWMWindowType])
 			updatewindowtype(c);
 	}
+}
+
+void
+pushstack(const Arg *arg) {
+	int i = stackpos(arg);
+	Client *sel = selmon->sel, *c, *p;
+
+	if(i < 0)
+		return;
+	else if(i == 0) {
+		detach(sel);
+		attach(sel);
+	}
+	else {
+		for(p = NULL, c = selmon->clients; c; p = c, c = c->next)
+			if(!(i -= (ISVISIBLE(c) && c != sel)))
+				break;
+		c = c ? c : p;
+		detach(sel);
+		sel->next = c->next;
+		c->next = sel;
+	}
+	arrange(selmon);
 }
 
 void
@@ -1848,6 +1865,36 @@ spawn(const Arg *arg)
 		perror(" failed");
 		exit(EXIT_SUCCESS);
 	}
+}
+
+int
+stackpos(const Arg *arg) {
+	int n, i;
+	Client *c, *l;
+
+	if(!selmon->clients)
+		return -1;
+
+	if(arg->i == PREVSEL) {
+		for(l = selmon->stack; l && (!ISVISIBLE(l) || l == selmon->sel); l = l->snext);
+		if(!l)
+			return -1;
+		for(i = 0, c = selmon->clients; c != l; i += ISVISIBLE(c) ? 1 : 0, c = c->next);
+		return i;
+	}
+	else if(ISINC(arg->i)) {
+		if(!selmon->sel)
+			return -1;
+		for(i = 0, c = selmon->clients; c != selmon->sel; i += ISVISIBLE(c) ? 1 : 0, c = c->next);
+		for(n = i; c; n += ISVISIBLE(c) ? 1 : 0, c = c->next);
+		return MOD(i + GETINC(arg->i), n);
+	}
+	else if(arg->i < 0) {
+		for(i = 0, c = selmon->clients; c; i += ISVISIBLE(c) ? 1 : 0, c = c->next);
+		return MAX(i + arg->i, 0);
+	}
+	else
+		return arg->i;
 }
 
 void

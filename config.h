@@ -23,53 +23,37 @@ static char selfgcolor[]            = "#000000";
 static char selbordercolor[]        = "#c9cba3";
 static char selbgcolor[]            = "#282828";
 
-static char color1bg[]       = "#c9cba3";
-static char color2bg[]       = "#ffe1a8";
-static char color3bg[]       = "#e26d5c";
-static char color4bg[]       = "#723d46";
-static char color5bg[]       = "#472d30";
-static char color6bg[]       = "#723d46";
-static char color1fg[]       = "#000000";
-static char color2fg[]       = "#000000";
-static char color3fg[]       = "#000000";
-static char color4fg[]       = "#ffffff";
-static char color5fg[]       = "#ffffff";
-static char color6fg[]       = "#ffffff";
+static char color0bg[]					    = "#c9cba3";
+static char color1bg[]        	    = "#ffe1a8";
+static char color2bg[]        	    = "#e26d5c";
+static char color3bg[]        	    = "#723d46";
+static char color4bg[]        	    = "#472d30";
+static char color5bg[]        	    = "#723d46";
+                                              
+static char color0fg[]        	    = "#000000";
+static char color1fg[]        	    = "#000000";
+static char color2fg[]        	    = "#000000";
+static char color3fg[]        	    = "#ffffff";
+static char color4fg[]        	    = "#ffffff";
+static char color5fg[]        	    = "#ffffff";
 
 static const char *colors[][3]      = {
 	/*					fg         bg          border   */
 	[SchemeNorm]			= { normfgcolor, normbgcolor, normbordercolor },
   [SchemeSel]				= { selfgcolor,  selbgcolor,  selbordercolor  },
 
-	// Color scheme 1
-	//[SchemeCol1]=		 { col_black, "#faa275",	normbordercolor },
-	//[SchemeCol2]=		 { col_black, "#ff8c61",  normbordercolor },
-	//[SchemeCol3]=		 { col_black, "#ce6a85",  normbordercolor },
-	//[SchemeCol4]=		 { col_white, "#985277",  normbordercolor },
-	//[SchemeCol5]=		 { col_white, "#5c374c",  normbordercolor },
-	//[SchemeCol6]=		 { col_white, "#5c373c",  normbordercolor },
-	
-	// Color scheme 2
-	//[SchemeCol1]=		 { col_black, "#fe938c",	normbordercolor },
-	//[SchemeCol2]=		 { col_black, "#e6b89c",  normbordercolor },
-	//[SchemeCol3]=		 { col_black, "#ead2ac",  normbordercolor },
-	//[SchemeCol4]=		 { col_black, "#9cafb7",  normbordercolor },
-	//[SchemeCol5]=		 { col_white, "#4281a4",  normbordercolor },
-	//[SchemeCol6]=		 { col_white, "#4263a4",  normbordercolor },
-
-	// Color scheme 3
-	[SchemeCol1]=		 { color1fg,	color1bg, normbordercolor },
-	[SchemeCol2]=		 { color2fg,  color2bg, normbordercolor },
-	[SchemeCol3]=		 { color3fg,  color3bg, normbordercolor },
-	[SchemeCol4]=		 { color4fg,  color4bg, normbordercolor },
-	[SchemeCol5]=		 { color5fg,  color5bg, normbordercolor },
-	[SchemeCol6]=		 { color6fg,  color6bg, normbordercolor },
-
 	[SchemeStatus]		= { normfgcolor, normbgcolor, normbordercolor },
 	[SchemeTagsSel]		= { selfgcolor,	 selbgcolor,  selbordercolor	 },
 	[SchemeTagsNorm]	= { normfgcolor, normbgcolor, normbordercolor  },
   [SchemeInfoSel]		= { selfgcolor,	 selbgcolor,  selbordercolor },
   [SchemeInfoNorm]  = { normfgcolor, normbgcolor, normbordercolor },
+
+	[SchemeColor0]		= { color0fg,		 color0bg,		normbordercolor },
+	[SchemeColor1]		= { color1fg,		 color1bg,		normbordercolor },
+	[SchemeColor2]		= { color2fg,		 color2bg,		normbordercolor },
+	[SchemeColor3]		= { color3fg,		 color3bg,		normbordercolor },
+	[SchemeColor4]		= { color4fg,		 color4bg,		normbordercolor },
+	[SchemeColor5]		= { color5fg,		 color5bg,		normbordercolor },
 };
 
 static const unsigned int alphas[][3]      = {
@@ -77,18 +61,18 @@ static const unsigned int alphas[][3]      = {
 	[SchemeNorm] = { OPAQUE, baralpha, borderalpha },
 	[SchemeSel]  = { OPAQUE, baralpha, borderalpha },
 
-	[SchemeCol1]=	{ OPAQUE, OPAQUE, OPAQUE },
-	[SchemeCol2]=	{ OPAQUE, OPAQUE, OPAQUE },
-	[SchemeCol3]=	{ OPAQUE, OPAQUE, OPAQUE },
-	[SchemeCol4]=	{ OPAQUE, OPAQUE, OPAQUE },
-	[SchemeCol5]=	{ OPAQUE, OPAQUE, OPAQUE },
-	[SchemeCol6]=	{ OPAQUE, OPAQUE, OPAQUE },
-
 	[SchemeStatus]		= { OPAQUE, OPAQUE,	OPAQUE }, 
-	[SchemeTagsSel]		= { OPAQUE, OPAQUE,	OPAQUE  },
-	[SchemeTagsNorm]	= { OPAQUE, OPAQUE, OPAQUE  },
-  [SchemeInfoSel]		= { OPAQUE, OPAQUE,		OPAQUE},
-  [SchemeInfoNorm]  = { OPAQUE, OPAQUE,		OPAQUE },
+	[SchemeTagsSel]		= { OPAQUE, OPAQUE,	OPAQUE },
+	[SchemeTagsNorm]	= { OPAQUE, OPAQUE, OPAQUE },
+  [SchemeInfoSel]		= { OPAQUE, OPAQUE,	OPAQUE },
+  [SchemeInfoNorm]  = { OPAQUE, OPAQUE,	OPAQUE },
+
+  [SchemeColor0]		= { OPAQUE, OPAQUE,	OPAQUE }, 
+  [SchemeColor1]    = { OPAQUE, OPAQUE,	OPAQUE },
+  [SchemeColor2]    = { OPAQUE, OPAQUE, OPAQUE },
+  [SchemeColor3]    = { OPAQUE, OPAQUE,	OPAQUE },
+  [SchemeColor4]    = { OPAQUE, OPAQUE,	OPAQUE },
+  [SchemeColor5]		= { OPAQUE, OPAQUE,	OPAQUE },
 };
 
 /* tagging */
@@ -127,6 +111,14 @@ static const Layout layouts[] = {
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
 	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
+#define STACKKEYS(MOD,ACTION) \
+	{ MOD, XK_j,     ACTION##stack, {.i = INC(+1) } }, \
+	{ MOD, XK_k,     ACTION##stack, {.i = INC(-1) } }, \
+	{ MOD, XK_w,     ACTION##stack, {.i = 0 } }, \
+	//{ MOD, XK_grave, ACTION##stack, {.i = PREVSEL } }, \
+	//{ MOD, XK_a,     ACTION##stack, {.i = 1 } }, \
+	//{ MOD, XK_z,     ACTION##stack, {.i = 2 } }, \
+	//{ MOD, XK_x,     ACTION##stack, {.i = -1 } },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -183,8 +175,8 @@ static Key keys[] = {
 	{ MODKEY,												XK_F1,		 					 spawn,          {.v = mountcmd } },
 	{ MODKEY,												XK_F2,		 					 spawn,          {.v = unmountcmd } },
 	{ MODKEY,                       XK_b,      					 togglebar,      {0} },
-	{ MODKEY,                       XK_j,      					 focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,      					 focusstack,     {.i = -1 } },
+	STACKKEYS(MODKEY,                          focus)
+	STACKKEYS(MODKEY|ShiftMask,                push)
 	{ MODKEY,                       XK_i,      					 incnmaster,     {.i = +1 } },
 	{ MODKEY,                       XK_d,      					 incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      					 setmfact,       {.f = -0.05} },
