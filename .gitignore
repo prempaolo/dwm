@@ -35,12 +35,17 @@
 *.i*86
 *.x86_64
 *.hex
+dwm
 
 # Debug files
 *.dSYM/
 *.su
 *.idb
 *.pdb
+
+# Patches
+*.orig
+*.rej
 
 # Kernel Module Compile Results
 *.mod*

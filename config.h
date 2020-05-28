@@ -129,8 +129,9 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *termcmd[]  = { "termite", NULL };
 static const char *lockcmd[]  = { "lock_screen", NULL };
 static const char *emailcmd[]  = { "st", "-n", "float", "-g", "140x50", "-e", "neomutt", NULL };
-static const char *newscmd[]  = { "st", "-n", "float", "-g", "140x50", "-e", "newsboat", NULL };
+static const char *newscmd[]  = { "termite", "-e", "newsboat", NULL };
 static const char *musiccmd[]  = { "st", "-n", "float", "-g", "120x40", "-e", "ncmpcpp", NULL };
+static const char *urlcmd[]  = { "urxvt", "-e", "search_w3m", NULL };
 static const char *screenshotcmd[]  = { "screenshot", NULL };
 static const char *screenshotcropcmd[]  = { "screenshot", "-s", NULL };
 static const char *telegramcmd[]  = { "toggle_telegram", NULL };
@@ -148,6 +149,7 @@ static const char *mountcmd[]  = { "dmenu_mount", NULL };
 static const char *unmountcmd[]  = { "dmenu_unmount", NULL };
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "termite", "-t", scratchpadname, NULL };
+static const char *screenkeycmd[]  = { "toggle_screenkey", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -156,7 +158,9 @@ static Key keys[] = {
 	{ MODKEY,												XK_Return, 					 spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_minus,  					 togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,												XK_e,			 					 spawn,          {.v = emailcmd } },
+	{ MODKEY,												XK_s,			 					 spawn,          {.v = screenkeycmd } },
 	{ MODKEY,												XK_n,			 					 spawn,          {.v = newscmd } },
+	{ MODKEY,												XK_u,			 					 spawn,          {.v = urlcmd } },
 	{ MODKEY,												XK_equal,	 					 spawn,          {.v = telegramcmd } },
 	/* ------------------------------ music ---------------------------------- */
 	{ MODKEY,												XK_m,								 spawn,					 {.v = musiccmd } },
@@ -218,7 +222,12 @@ static Button buttons[] = {
 	{ ClkLtSymbol,          0,              Button1,        cyclelayout,    {.i = +1 } },
 	{ ClkLtSymbol,          0,              Button3,        cyclelayout,    {.i = -1 } },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
+	{ ClkStatusText,        0,              Button1,        sigdwmblocks,   {.i = 1} },
+	{ ClkStatusText,        0,              Button2,        sigdwmblocks,   {.i = 2} },
+	{ ClkStatusText,        0,              Button3,        sigdwmblocks,   {.i = 3} },
+	{ ClkStatusText,        0,              Button4,        sigdwmblocks,   {.i = 4} },
+	{ ClkStatusText,        0,              Button5,        sigdwmblocks,   {.i = 5} },
+	{ ClkStatusText,        ShiftMask,      Button1,        sigdwmblocks,   {.i = 6} },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
