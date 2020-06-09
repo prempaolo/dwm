@@ -126,10 +126,10 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", col_black, NULL };
-static const char *termcmd[]  = { "termite", NULL };
+static const char *termcmd[]  = { "st", NULL };
 static const char *lockcmd[]  = { "lock_screen", NULL };
 static const char *emailcmd[]  = { "st", "-n", "float", "-g", "140x50", "-e", "neomutt", NULL };
-static const char *newscmd[]  = { "termite", "-e", "newsboat", NULL };
+static const char *newscmd[]  = { "st", "-e", "newsboat", NULL };
 static const char *musiccmd[]  = { "st", "-n", "float", "-g", "120x40", "-e", "ncmpcpp", NULL };
 static const char *urlcmd[]  = { "urxvt", "-e", "search_w3m", NULL };
 static const char *screenshotcmd[]  = { "screenshot", NULL };
@@ -148,7 +148,7 @@ static const char *emojicmd[]  = { "dmenuunicode", NULL };
 static const char *mountcmd[]  = { "dmenu_mount", NULL };
 static const char *unmountcmd[]  = { "dmenu_unmount", NULL };
 static const char scratchpadname[] = "scratchpad";
-static const char *scratchpadcmd[] = { "termite", "-t", scratchpadname, NULL };
+static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, NULL };
 static const char *screenkeycmd[]  = { "toggle_screenkey", NULL };
 
 static Key keys[] = {
