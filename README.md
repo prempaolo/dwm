@@ -12,6 +12,7 @@ My personal version of dwm. In the `patches` folder there are all the patches th
 - *scratchpad*: adds a scratchpad terminal (`win + minus` in my config)
 - *uselessgap*: adds useless gaps
 - *statuscmd*: clickable dwmblocks bar
+- *swallow*: swallow clients opened from terminal
 
 ## Scripts
 
