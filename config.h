@@ -4,6 +4,7 @@
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int gappx     = 6;        /* gaps between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
+static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 //static const char *fonts[]          = { "Fontawesome:size=9", "Hack Nerd Font:size=10" };
@@ -83,12 +84,14 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     iscentered		isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            0,						1,           -1 },
-	{ "firefox",  NULL,       NULL,       0,						1,						1,           -1 },
-	{ "Telegram", NULL,       NULL,       0,						1,						1,           -1 },
-	{ "St",				"float",		NULL,				0,            1,						1,           -1 },
-	{ "Sxiv",			"float",		NULL,				0,            1,						1,           -1 },
+	/* class      instance    title						tags mask     iscentered		isfloating   isterminal		noswallow		monitor */
+	{ "Gimp",     NULL,       NULL,       		0,            0,						1,           0,						0,					-1 },
+	{ "firefox",  NULL,       NULL,       		0,						1,						1,           0,						-1,					-1 },
+	{ "Telegram", NULL,       NULL,       		0,						1,						1,           0,						0,					-1 },
+	{ "St",				NULL,				NULL,						0,            1,						0,           1,						-1,					-1 },
+	{ "St",				"float",		NULL,						0,            1,						1,           1,						-1,					-1 },
+	{ "Sxiv",			"float",		NULL,						0,            1,						1,           0,						0,					-1 },
+	{ NULL,       NULL,       "Event Tester", 0,						1,						1,					 0,           1,					-1 }, /* xev */
 };
 
 /* layout(s) */
@@ -144,6 +147,7 @@ static const char *previoussongcmd[]  = { "mpc", "prev", NULL };
 static const char *togglemutecmd[]  = { "pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle", NULL };
 
 static const char *quitcmd[]  = { "killall", "xinit", NULL };
+static const char *systemcmd[]  = { "sysact", NULL };
 static const char *emojicmd[]  = { "dmenuunicode", NULL };
 static const char *mountcmd[]  = { "dmenu_mount", NULL };
 static const char *unmountcmd[]  = { "dmenu_unmount", NULL };
@@ -171,6 +175,7 @@ static Key keys[] = {
 	{ MODKEY,												XK_bracketright,		 spawn,          {.v = volumeupcmd } },
 	{ MODKEY,												XK_bracketleft,			 spawn,          {.v = volumedowncmd } },
 	{ MODKEY,												XK_backslash,			 	 spawn,          {.v = togglemutecmd } },
+	{ MODKEY,												XK_BackSpace,			 	 spawn,          {.v = systemcmd } },
 	{ MODKEY,												XK_z,			 					 spawn,          {.v = lockcmd } },
 	{ MODKEY,												XK_y,			 					 spawn,          {.v = screenshotcmd } },
 	{ MODKEY|ShiftMask,							XK_y,			 					 spawn,          {.v = screenshotcropcmd } },
